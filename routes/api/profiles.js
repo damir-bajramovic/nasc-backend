@@ -1,7 +1,7 @@
-var router = require('express').Router();
-var mongoose = require('mongoose');
-var User = mongoose.model('User');
-var auth = require('../auth');
+const router = require('express').Router();
+const mongoose = require('mongoose');
+const User = mongoose.model('User');
+const auth = require('../auth');
 
 // Preload user profile on routes with ':username'
 router.param('username', function(req, res, next, username){

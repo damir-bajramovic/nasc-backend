@@ -1,6 +1,6 @@
-var router = require('express').Router();
-var mongoose = require('mongoose');
-var Event = mongoose.model('Event');
+const router = require('express').Router();
+const mongoose = require('mongoose');
+const Event = mongoose.model('Event');
 
 // return a list of tags
 router.get('/', function(req, res, next) {

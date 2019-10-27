@@ -1,9 +1,9 @@
-var router = require('express').Router();
-var mongoose = require('mongoose');
-var Event = mongoose.model('Event');
-var Comment = mongoose.model('Comment');
-var User = mongoose.model('User');
-var auth = require('../auth');
+const router = require('express').Router();
+const mongoose = require('mongoose');
+const Event = mongoose.model('Event');
+const Comment = mongoose.model('Comment');
+const User = mongoose.model('User');
+const auth = require('../auth');
 
 // Preload event objects on routes with ':event'
 router.param('event', function(req, res, next, slug) {
