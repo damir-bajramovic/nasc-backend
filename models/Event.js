@@ -8,11 +8,13 @@ const EventSchema = new mongoose.Schema({
   title: String,
   description: String,
   body: String,
-  favoritesCount: {type: Number, default: 0},
+  favoritesCount: {type: Number, default: 0}, // Does this field even make sense right now?
+  subscribersCount: {type: Number, default: 0},
   comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment' }],
   tagList: [{ type: String }],
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  stream: String
+  stream: String,
+  price: Number
 }, 
 {
   timestamps: true,
@@ -33,9 +35,14 @@ EventSchema.methods.slugify = function() {
 };
 
 EventSchema.methods.updateFavoriteCount = async function() {
-  this.favoritesCount = await User.count({favorites: {$in: [event._id]}});
+  this.favoritesCount = await User.count({favorites: {$in: [this._id]}});
   return await this.save();
 };
+
+EventSchema.methods.updateSubscribersCount = async function() {
+  this.subscribersCount = await User.count({subscriptions: {$in: [this._id]}});
+  return await this.save();
+}
 
 EventSchema.methods.toJSONFor = function(user){
   return {
@@ -48,8 +55,11 @@ EventSchema.methods.toJSONFor = function(user){
     tagList: this.tagList,
     favorited: user ? user.isFavorite(this._id) : false,
     favoritesCount: this.favoritesCount,
+    subscribed: user ? user.isSubscribed(this._id) : false,
+    subscribersCount: this.subscribersCount,
     author: this.author.toProfileJSONFor(user),
-    stream: this.stream
+    stream: this.stream,
+    price: this.price
   };
 };
 

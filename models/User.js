@@ -11,6 +11,7 @@ const UserSchema = new mongoose.Schema({
   image: String,
   favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Event' }],
   following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  subscriptions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Event' }],
   hash: String,
   salt: String
 }, 
@@ -110,6 +111,27 @@ UserSchema.methods.unfollow = async function (id){
 UserSchema.methods.isFollowing = function(id){
   return this.following.some(function(followId){
     return followId.toString() === id.toString();
+  });
+};
+
+UserSchema.methods.subscribe = async function(id){
+  if(this.subscriptions.indexOf(id) === -1)
+    await this.model("User").findOneAndUpdate(
+      { _id: this._id },
+      { $push: { subscriptions: id } }
+    );
+
+  return await this.save();
+};
+
+// TODO: Unsubscribe from the event.
+// TODO: Implement refunds.
+// UserSchema.methods.unsubscribe = async function (id){
+// };
+
+UserSchema.methods.isSubscribed = function (id){
+  return this.subscriptions.some(function (subscribedId) {
+    return subscribedId.toString() === id.toString();
   });
 };
 

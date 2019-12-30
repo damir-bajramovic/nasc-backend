@@ -21,7 +21,7 @@
     "body-parser": "1.15.0",
     "braintree": "^2.21.0",
     "cheerio": "^1.0.0-rc.3",
-    "cors": "2.7.1",
+    "cors": "^2.7.1",
     "ejs": "2.4.1",
     "errorhandler": "1.4.3",
     "express": "4.13.4",

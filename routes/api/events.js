@@ -18,20 +18,25 @@ router.param('event', function(req, res, next, slug) {
     }).catch(next);
 });
 
-router.param('comment', function(req, res, next, id) {
-  Comment.findById(id).then(function(comment){
-    if(!comment) { return res.sendStatus(404); }
+router.param('comment', async function(req, res, next, id) {
+  try {
+    const comment = await Comment.findById(id);
+
+    if(!comment) 
+      return res.sendStatus(404);
 
     req.comment = comment;
 
     return next();
-  }).catch(next);
+  } catch (err) {
+    next(err);
+  }
 });
 
 router.get('/', auth.optional, function(req, res, next) {
-  var query = {};
-  var limit = 20;
-  var offset = 0;
+  let query = {};
+  let limit = 20;
+  let offset = 0;
 
   if(typeof req.query.limit !== 'undefined'){
     limit = req.query.limit;
@@ -87,8 +92,8 @@ router.get('/', auth.optional, function(req, res, next) {
 });
 
 router.get('/feed', auth.required, function(req, res, next) {
-  var limit = 20;
-  var offset = 0;
+  let limit = 20;
+  let offset = 0;
 
   if(typeof req.query.limit !== 'undefined'){
     limit = req.query.limit;
@@ -194,33 +199,58 @@ router.delete('/:event', auth.required, function(req, res, next) {
 });
 
 // Favorite an event
-router.post('/:event/favorite', auth.required, function(req, res, next) {
-  var eventId = req.event._id;
+router.post('/:event/favorite', auth.required, async function(req, res, next) {
+  try {
+    const eventId = req.event._id;
+    const user = await User.findById(req.payload.id);
+    if (!user) 
+      return res.sendStatus(401);
 
-  User.findById(req.payload.id).then(function(user){
-    if (!user) { return res.sendStatus(401); }
+    await user.favorite(eventId);
 
-    return user.favorite(eventId).then(function(){
-      return req.event.updateFavoriteCount().then(function(event){
-        return res.json({event: event.toJSONFor(user)});
-      });
-    });
-  }).catch(next);
+    const event = await req.event.updateFavoriteCount();
+
+    return res.json({event: event.toJSONFor(user)});
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post(':event/subscribe', auth.required, async function(req, res, next) {
+  try {
+    const eventId = req.event._id; // TODO: How is the event sent? Do I need to confirm the amount? 
+    
+    const user = await User.findById(req.payload.id);
+    if (!user) 
+      return res.sendStatus(401);
+
+    await user.favorite(eventId);
+
+    const event = await req.event.updateFavoriteCount();
+
+    return res.json({event: event.toJSONFor(user)});
+  } catch (err) {
+    next (err);
+  }
 });
 
 // Unfavorite an event
-router.delete('/:event/favorite', auth.required, function(req, res, next) {
-  var eventId = req.event._id;
+router.delete('/:event/favorite', auth.required, async function(req, res, next) {
+  try {
+    const eventId = req.event._id;
 
-  User.findById(req.payload.id).then(function (user){
-    if (!user) { return res.sendStatus(401); }
+    const user = await User.findById(req.payload.id);
 
-    return user.unfavorite(eventId).then(function(){
-      return req.event.updateFavoriteCount().then(function(event){
-        return res.json({event: event.toJSONFor(user)});
-      });
-    });
-  }).catch(next);
+    if (!user) 
+      return res.sendStatus(401);
+  
+    await user.unfavorite(eventId);
+    const event = await req.event.updateFavoriteCount();
+
+    return res.json({event: event.toJSONFor(user)});
+  } catch (err) {
+    next(err);
+  }
 });
 
 // return an event's comments
