@@ -59,6 +59,9 @@ EventSchema.methods.toJSONFor = function(user){
     subscribersCount: this.subscribersCount,
     author: this.author.toProfileJSONFor(user),
     stream: this.stream,
+    host: process.env.RED5PRO_HOST,
+    port: process.env.RED5PRO_PORT,
+    app: process.env.RED5PRO_APP,
     price: this.price
   };
 };
