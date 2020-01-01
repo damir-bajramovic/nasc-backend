@@ -16,7 +16,7 @@ const paymentService = new PaymentService(
 );
 
 // Method used to generate and return a client token. Client token is used for creating hosted fields instances or Drop-In UI instances on the front-end side for credit-card payment. 
-router.post('/client_token', auth.required, async (req, res) => {
+router.post('/client_token', async (req, res) => {
   const customerId = req.body.customerId ? req.body.customerId : null;
   
   const payload = await paymentService.generateClientToken(customerId);
