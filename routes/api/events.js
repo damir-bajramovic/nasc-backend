@@ -7,7 +7,7 @@ const auth = require('../auth');
 
 // Preload event objects on routes with ':event'
 router.param('event', function(req, res, next, slug) {
-  Event.findOne({ slug: slug})
+  Event.findOne({ slug: slug })
     .populate('author')
     .then(function (event) {
       if (!event) { return res.sendStatus(404); }

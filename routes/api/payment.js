@@ -15,16 +15,14 @@ const paymentService = new PaymentService(
   process.env.BRAINTREE_IS_SANDBOX
 );
 
-// Method used to generate and return a client token. Client token is used for creating hosted fields instances or Drop-In UI instances on the front-end side for credit-card payment. 
-router.post('/client_token', async (req, res) => {
-  const customerId = req.body.customerId ? req.body.customerId : null;
-  
-  const payload = await paymentService.generateClientToken(customerId);
-
+router.post('/client_token', auth.required, async (req, res) => {
+  const payload = await paymentService.generateClientToken(); // TODO: Add option for remembering the payment method
   res.send({ clientToken: payload.clientToken });
 });
 
-// TODO: Move this endpoint to events. It is more appropriate. 
+
+// // TODO: How to preload stuff? 
+
 // Reference for processor response codes https://developers.braintreepayments.com/reference/general/processor-responses/authorization-responses
 // Used for finishing the process of credit-card payment. 
 // Recevies the payment method nonce, generated from users credit card information on braintree servers and returned to our front end.
@@ -38,7 +36,7 @@ router.post("/checkout", auth.required, async (req, res, next) => {
   // Any amount above 2000 will result in the error code, corresponding to the whole number value.
   // There is like a 1000 possible error codes. That's a lot. 
 
-  // TODO: Get this in the middleware
+  // TODO: Get this in the middleware. Populate the author! 
   const event = await Event.findOne({ slug: req.body.event.slug });
   const amount = event.price;
 
@@ -48,7 +46,6 @@ router.post("/checkout", auth.required, async (req, res, next) => {
   if (!transaction.success)
     return res.status(400).send({ message: genericErrorMessage });
   
-  // TODO: Change the subscription status of that user. 
   // TODO: Move this into a separate server. Make them communicate using RabbitMQ or Kafka.
   try {
     const user = await User.findById(req.payload.id);
