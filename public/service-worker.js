@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/precache-manifest.1d86e3e28b2d9fb26b9869f8fcbac78e.js"
+  "/precache-manifest.d11685eef199418dd1c804ad67f85b25.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "realworld-vue"});
