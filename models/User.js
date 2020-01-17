@@ -13,7 +13,8 @@ const UserSchema = new mongoose.Schema({
   following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   subscriptions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Event' }],
   hash: String,
-  salt: String
+  salt: String,
+  isAdmin: Boolean
 }, 
 {
   timestamps: true,
@@ -50,7 +51,8 @@ UserSchema.methods.toAuthJSON = function(){
     email: this.email,
     token: this.generateJWT(),
     bio: this.bio,
-    image: this.image
+    image: this.image,
+    isAdmin: this.isAdmin
   };
 };
 
