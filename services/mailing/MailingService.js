@@ -28,7 +28,6 @@ class MailingService {
      */
     constructor(apiKey) {
         this.sendgrid = SendGrid(apiKey);
-        this.helper = SendGrid.mail;
     }
 
     async sendEmail(from, to, subject, body, mimeType) {
