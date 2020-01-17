@@ -30,6 +30,15 @@ class MailingService {
         this.sendgrid = SendGrid(apiKey);
     }
 
+    /**
+     * Function used for sending an email. 
+     * @param {String} from email.
+     * @param {String} to email.
+     * @param {String} subject of the email.
+     * @param {String} body of the email. 
+     * @param {String} mimeType of the email body. Specify what you are trying to send: html, plain text or something else. 
+     * @returns SendGrid API response wrapped in a promise. 
+     */
     async sendEmail(from, to, subject, body, mimeType) {
         const mail = prepareEmail(from, to, subject, body, mimeType);
         const request = this.sendgrid.emptyRequest({
