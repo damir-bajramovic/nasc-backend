@@ -5,6 +5,8 @@ const Comment = mongoose.model('Comment');
 const User = mongoose.model('User');
 const auth = require('../auth');
 
+const userMiddleware = require('./../../middleware/user');
+
 // Preload event objects on routes with ':event'
 router.param('event', function(req, res, next, slug) {
   Event.findOne({ slug: slug })
@@ -127,7 +129,7 @@ router.get('/feed', auth.required, function(req, res, next) {
   });
 });
 
-router.post('/', auth.required, function(req, res, next) {
+router.post('/', auth.required, userMiddleware.isAdmin, function(req, res, next) {
   User.findById(req.payload.id).then(function(user){
     if (!user) { return res.sendStatus(401); }
 
@@ -155,7 +157,7 @@ router.get('/:event', auth.optional, function(req, res, next) {
 });
 
 // update event
-router.put('/:event', auth.required, function(req, res, next) {
+router.put('/:event', auth.required, userMiddleware.isAdmin, function(req, res, next) {
   User.findById(req.payload.id).then(function(user){
     if(req.event.author._id.toString() === req.payload.id.toString()){
       if(typeof req.body.event.title !== 'undefined'){
@@ -184,7 +186,7 @@ router.put('/:event', auth.required, function(req, res, next) {
 });
 
 // delete event
-router.delete('/:event', auth.required, function(req, res, next) {
+router.delete('/:event', auth.required, userMiddleware.isAdmin, function(req, res, next) {
   User.findById(req.payload.id).then(function(user){
     if (!user) { return res.sendStatus(401); }
 

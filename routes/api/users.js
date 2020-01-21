@@ -4,6 +4,8 @@ const passport = require('passport');
 const User = mongoose.model('User');
 const auth = require('../auth');
 
+const userMiddleware = require('./../../middleware/user');
+
 router.get('/user', auth.required, async function(req, res, next){
   try {
     const user = await User.findById(req.payload.id);
@@ -28,7 +30,7 @@ router.put('/user', auth.required, async (req, res, next) => {
       user.username = req.body.username;
 
     if(req.body.email)
-      user.email = req.body.email;
+      user.email = req.body.email.toLowerCase().trim();
 
     if(req.body.bio)
       user.bio = req.body.bio;
@@ -47,7 +49,7 @@ router.put('/user', auth.required, async (req, res, next) => {
   }
 });
 
-router.post('/users/login', async function(req, res, next){
+router.post('/users/login', userMiddleware.sanitize, async function(req, res, next){
   if(!req.body.user.email) {
     return res.status(422).json({errors: {email: "can't be blank"}});
   }
@@ -68,7 +70,7 @@ router.post('/users/login', async function(req, res, next){
   })(req, res, next);
 });
 
-router.post('/users', function(req, res, next){
+router.post('/users', userMiddleware.sanitize, async function(req, res, next){
   const user = new User();
   
   user.username = req.body.user.username;
