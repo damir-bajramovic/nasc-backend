@@ -12,6 +12,10 @@ const UserSchema = new mongoose.Schema({
   favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Event' }],
   following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   subscriptions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Event' }],
+  emailConfirmed: {
+    type: Boolean,
+    default: false
+  },
   hash: String,
   salt: String
 }, 
@@ -50,7 +54,8 @@ UserSchema.methods.toAuthJSON = function(){
     email: this.email,
     token: this.generateJWT(),
     bio: this.bio,
-    image: this.image
+    image: this.image,
+    emailConfirmed: this.emailConfirmed
   };
 };
 
