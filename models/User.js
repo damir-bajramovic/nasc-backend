@@ -12,6 +12,10 @@ const UserSchema = new mongoose.Schema({
   favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Event' }],
   following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   subscriptions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Event' }],
+  emailConfirmed: {
+    type: Boolean,
+    default: false
+  },
   hash: String,
   salt: String,
   isAdmin: Boolean
@@ -52,7 +56,8 @@ UserSchema.methods.toAuthJSON = function(){
     token: this.generateJWT(),
     bio: this.bio,
     image: this.image,
-    isAdmin: this.isAdmin
+    isAdmin: this.isAdmin,
+    emailConfirmed: this.emailConfirmed
   };
 };
 
