@@ -6,7 +6,7 @@ const secret = require('../config').secret;
 
 const UserSchema = new mongoose.Schema({
   username: {type: String, lowercase: true, unique: true, required: [true, "can't be blank"], match: [/^[a-zA-Z0-9]+$/, 'is invalid'], index: true},
-  email: {type: String, lowercase: true, unique: true, required: [true, "can't be blank"], match: [/\S+@\S+\.\S+/, 'is invalid'], index: true},
+  email: {type: String, lowercase: true, unique: true, required: [true, "can't be blank"], match: [/\S+@\S+\.\S+/, 'is invalid'], index: true}, // TODO: Use email validator.
   bio: String,
   image: String,
   favorites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Event' }],
@@ -49,6 +49,7 @@ UserSchema.methods.generateJWT = function() {
     id: this._id,
     username: this.username,
     exp: parseInt(exp.getTime() / 1000),
+    isAdmin: this.isAdmin
   }, secret);
 };
 
