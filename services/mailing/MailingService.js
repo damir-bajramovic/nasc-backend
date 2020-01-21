@@ -22,7 +22,7 @@ class MailingService {
      * @param {String} subject of the email.
      * @param {String} body of the email. 
      * @param {String} mimeType of the email body. Specify what you are trying to send: html, plain text or something else. 
-     * @returns SendGrid API response wrapped in a promise. 
+     * @returns {Promise} SendGrid API response. 
      */
     async sendEmail(from, to, subject, body, mimeType) {
         const mail = Helpers.prepareEmail(from, to, subject, body, mimeType);
