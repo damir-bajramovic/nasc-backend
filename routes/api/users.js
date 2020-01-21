@@ -23,7 +23,7 @@ router.put('/user', auth.required, async (req, res, next) => {
     if(!user)
       return res.sendStatus(401); 
 
-    // only update fields that were actually passed...
+    // TODO: Make this more beautiful. Only update fields that were actually passed...
     if(req.body.username)
       user.username = req.body.username;
 
@@ -69,17 +69,18 @@ router.post('/users/login', async function(req, res, next){
 });
 
 router.post('/users', function(req, res, next){
-  var user = new User();
-
+  const user = new User();
+  
   user.username = req.body.user.username;
-  user.email = req.body.user.email;
+  user.email = req.body.user.email.toLowerCase();
   user.setPassword(req.body.user.password);
 
-  user.save().then(function(){
+  try {
+    await user.save();
     return res.json({user: user.toAuthJSON()});
-  }).catch(e => { 
-    return next(e)
-  });
+  } catch (e) {
+    return next(e);
+  }
 });
 
 module.exports = router;
