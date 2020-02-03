@@ -5,6 +5,8 @@ const Comment = mongoose.model('Comment');
 const User = mongoose.model('User');
 const auth = require('../auth');
 
+const { paymentService } = require('./../../init/services');
+
 const userMiddleware = require('./../../middleware/user');
 
 // Preload event objects on routes with ':event'
@@ -185,7 +187,7 @@ router.put('/:event', auth.required, userMiddleware.isAdmin, function(req, res, 
   });
 });
 
-// delete event
+// Delete an event
 router.delete('/:event', auth.required, userMiddleware.isAdmin, function(req, res, next) {
   User.findById(req.payload.id).then(function(user){
     if (!user) { return res.sendStatus(401); }
@@ -218,21 +220,27 @@ router.post('/:event/favorite', auth.required, async function(req, res, next) {
   }
 });
 
-router.post(':event/subscribe', auth.required, async function(req, res, next) {
-  try {
-    const eventId = req.event._id; // TODO: How is the event sent? Do I need to confirm the amount? 
-    
-    const user = await User.findById(req.payload.id);
+router.post('/:event/subscribe', auth.required, async function(req, res, next) {
+  const paymentNonce = req.body.paymentData.nonce;
+  const event = req.event;
+
+  const user = await User.findById(req.payload.id);
     if (!user) 
       return res.sendStatus(401);
 
-    await user.favorite(eventId);
+  const transaction = await paymentService.createSaleTransaction(paymentNonce, event.price);
 
-    const event = await req.event.updateFavoriteCount();
+  if (!transaction.success)
+    return res.status(400).send({ message: genericErrorMessage });
 
-    return res.json({event: event.toJSONFor(user)});
+  try {
+    await user.subscribe(event._id);
+    await event.updateSubscribersCount();
+
+    return res.sendStatus(200);
   } catch (err) {
-    next (err);
+    console.log(err);
+    next(err);
   }
 });
 
