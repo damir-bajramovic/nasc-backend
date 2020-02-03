@@ -11,6 +11,7 @@ const { paymentService } = require('./../../init/services/index');
 
 // TODO: Change this endpoint name
 router.post('/client_token', auth.required, async (req, res) => {
+  // TODO: Add error handling
   const payload = await paymentService.generateClientToken(); // TODO: Add option for remembering the payment method
   res.send({ clientToken: payload.clientToken });
 });
