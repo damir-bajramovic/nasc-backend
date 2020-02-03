@@ -3,7 +3,7 @@ const auth = require('../auth');
 
 const genericErrorMessage = "There was a problem processing your credit card; please double check your payment information and try again. If the problem persists contact our support or your bank.";
 
-const { paymentService } = require('./../../init/services/index');
+const { paymentService } = require('./../../init/services');
 
 
 // TODO: Change this endpoint name
