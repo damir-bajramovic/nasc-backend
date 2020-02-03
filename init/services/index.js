@@ -1,4 +1,4 @@
-const PaymentService = require('./../../services/payment/payment');
+const PaymentService = require('./../../services/payment');
 
 const paymentService = new PaymentService(
   process.env.BRAINTREE_MERCHANT_ID,
@@ -8,5 +8,5 @@ const paymentService = new PaymentService(
 );
 
 module.exports = {
-    paymentService
+  paymentService
 };
