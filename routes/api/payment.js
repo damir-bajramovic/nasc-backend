@@ -1,7 +1,5 @@
 const router = require('express').Router();
 const mongoose = require('mongoose');
-const User = mongoose.model('User');
-const Event = mongoose.model('Event');
 const auth = require('../auth');
 
 const genericErrorMessage = "There was a problem processing your credit card; please double check your payment information and try again. If the problem persists contact our support or your bank.";
