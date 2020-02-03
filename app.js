@@ -35,6 +35,8 @@ if (!isProduction) {
     app.use(errorhandler());
 }
 
+require('./init/services');
+
 require('./models/User');
 require('./models/Event');
 require('./models/Comment');
@@ -55,6 +57,7 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (!isProduction) {
     app.use(function(err, req, res, next) {
+        console.log(req.get('host') + req.originalUrl);
         console.log(err.stack);
 
         res.status(err.status || 500);
