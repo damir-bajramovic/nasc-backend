@@ -6,15 +6,10 @@ const auth = require('../auth');
 
 const genericErrorMessage = "There was a problem processing your credit card; please double check your payment information and try again. If the problem persists contact our support or your bank.";
 
-const PaymentService = require("./../../services/payment/payment");
+const { paymentService } = require('./../../init/services/index');
 
-const paymentService = new PaymentService(
-  process.env.BRAINTREE_MERCHANT_ID,
-  process.env.BRAINTREE_PUBLIC_KEY,
-  process.env.BRAINTREE_PRIVATE_KEY,
-  process.env.BRAINTREE_IS_SANDBOX
-);
 
+// TODO: Change this endpoint name
 router.post('/client_token', auth.required, async (req, res) => {
   const payload = await paymentService.generateClientToken(); // TODO: Add option for remembering the payment method
   res.send({ clientToken: payload.clientToken });
