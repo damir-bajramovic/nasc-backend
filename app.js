@@ -35,6 +35,8 @@ if (!isProduction) {
     app.use(errorhandler());
 }
 
+require('./init/services');
+
 require('./models/User');
 require('./models/Event');
 require('./models/Comment');
