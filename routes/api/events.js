@@ -162,6 +162,9 @@ router.get('/:event', auth.optional, function(req, res, next) {
 router.put('/:event', auth.required, userMiddleware.isAdmin, function(req, res, next) {
   User.findById(req.payload.id).then(function(user){
     if(req.event.author._id.toString() === req.payload.id.toString()){
+      
+      // TODO: Make updating an event more beautiful.
+      // This is just ugly. 
       if(typeof req.body.event.title !== 'undefined'){
         req.event.title = req.body.event.title;
       }
@@ -176,6 +179,14 @@ router.put('/:event', auth.required, userMiddleware.isAdmin, function(req, res, 
 
       if(typeof req.body.event.tagList !== 'undefined'){
         req.event.tagList = req.body.event.tagList
+      }
+
+      if(typeof req.body.event.price !== 'undefined'){
+        req.event.price = req.body.event.price
+      }
+
+      if(typeof req.body.event.stream !== 'undefined'){
+        req.event.stream = req.body.event.stream
       }
 
       req.event.save().then(function(event){
